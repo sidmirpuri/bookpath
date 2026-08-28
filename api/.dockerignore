@@ -1,4 +1,3 @@
 __pycache__/
 *.pyc
 .venv/
-data/book_embeddings.npy

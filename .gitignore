@@ -3,9 +3,6 @@ __pycache__/
 *.py[codz]
 *$py.class
 
-# Generated embeddings cache
-api/data/book_embeddings.npy
-
 # macOS
 .DS_Store
 
