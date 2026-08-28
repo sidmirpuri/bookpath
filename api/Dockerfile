@@ -12,6 +12,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Bake the model weights into the image at build time, so a fresh container
+# never has to download ~90MB from Hugging Face on its first real request
+# (that download, on a slow/free-tier host, was blowing past the platform's
+# proxy timeout).
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
 ENV PORT=8000
 EXPOSE 8000
 

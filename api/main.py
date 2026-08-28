@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,7 +7,18 @@ from pydantic import BaseModel, Field
 
 from model import get_recommender
 
-app = FastAPI(title="Book Insight Recommender")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load the model and embeddings before accepting traffic, rather than on
+    # whichever request happens to arrive first. On a slow/free-tier host,
+    # doing this lazily meant the first real user request could blow past
+    # the platform's proxy timeout waiting on model load.
+    get_recommender()
+    yield
+
+
+app = FastAPI(title="Book Insight Recommender", lifespan=lifespan)
 
 # ALLOWED_ORIGINS is a comma-separated list, e.g.
 # "http://localhost:3000,https://book-insight-ui.vercel.app"
