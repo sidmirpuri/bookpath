@@ -3,19 +3,25 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Generated embeddings cache
+api/data/book_embeddings.npy
+
+# macOS
+.DS_Store
+
 # C extensions
 *.so
 
 # Distribution / packaging
 .Python
-build/
+/build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
