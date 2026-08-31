@@ -2,6 +2,24 @@
 
 Shared notebooks and reusable utilities for the BookPath project.
 
+## Current application architecture
+
+- **Frontend:** Next.js in `Nextjs_kanon/book-insight-ui`, currently hosted on
+  [Vercel](https://book-insight-sable.vercel.app/) from
+  `kanon-dayo/book-insight` (`main`).
+- **Backend:** FastAPI in `api`, currently hosted on
+  [Render](https://book-insight-api-e023.onrender.com/health) from
+  `sidmirpuri/bookpath` (`add-book-recommender-app`).
+- **Recommendations:** `all-MiniLM-L6-v2` compares the user's goal with the
+  precomputed book embeddings in `api/data/book_embeddings.npy`.
+- **Data:** `api/data/exercise_data.csv` is the current book catalog. There is
+  no external database; the CSV and NumPy embeddings are packaged with the API.
+
+The current Vercel and Render deployments are connected to the repositories
+and branches listed above. Merging another branch into `sidmirpuri/bookpath`
+`main` will not update those deployments until their Git settings are changed
+to deploy from this repository and branch.
+
 ## Run the application with Docker
 
 Docker runs the Next.js frontend and FastAPI recommendation service without
