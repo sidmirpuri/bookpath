@@ -13,8 +13,7 @@ is available:
 docker ps
 ```
 
-Run all commands below from the repository root. The application uses two
-long-running containers, so keep two terminal windows open.
+Run all commands below from the repository root.
 
 | Service | Address |
 | --- | --- |
@@ -22,7 +21,42 @@ long-running containers, so keep two terminal windows open.
 | FastAPI service | <http://localhost:8000> |
 | FastAPI health check | <http://localhost:8000/health> |
 
-### 1. Build and start the API
+### Start everything with Docker Compose
+
+Start the frontend and API together with one command:
+
+```bash
+docker compose up --build
+```
+
+The first run downloads the container images, Python dependencies, and
+embedding model, so it can take a few minutes. Compose waits for the API health
+check before starting Next.js. When both services are ready, open
+<http://localhost:3000>.
+
+Keep the terminal open while using the application. Press `Ctrl+C` to stop the
+services, then remove the stopped containers and network:
+
+```bash
+docker compose down
+```
+
+The `web_node_modules` Docker volume keeps frontend dependencies outside the
+host filesystem. To remove that volume and force a completely fresh dependency
+installation, run `docker compose down --volumes`.
+
+If ports 3000 or 8000 are already in use, choose different host ports:
+
+```bash
+WEB_PORT=3001 API_PORT=8001 docker compose up --build
+```
+
+### Manual Docker alternative
+
+The commands below run the same services separately when individual container
+logs or lifecycle control are useful. Keep two terminal windows open.
+
+#### 1. Build and start the API
 
 In the first terminal:
 
@@ -59,7 +93,7 @@ curl -sS \
   -d '{"goal":"Learn startup finance","readingLevel":"beginner"}'
 ```
 
-### 2. Start the frontend
+#### 2. Start the frontend
 
 Keep the API running. In the second terminal, from the repository root:
 
@@ -120,7 +154,7 @@ npm ci
 npm run dev
 ```
 
-### Stop the application
+### Stop manually started containers
 
 Press `Ctrl+C` in each terminal. The `--rm` option removes each container after
 it stops. If either container is still running, stop it explicitly:
