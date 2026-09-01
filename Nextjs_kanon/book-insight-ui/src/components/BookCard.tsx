@@ -1,6 +1,7 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
+import Image from "next/image";
 import { ChevronDown, ImageOff, ExternalLink } from "lucide-react";
 import type { Book } from "@/lib/books";
 
@@ -13,6 +14,8 @@ interface BookCardProps {
 
 export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps) {
   const panelId = useId();
+  const [coverFailed, setCoverFailed] = useState(false);
+  const showCover = book.coverImageUrl && !coverFailed;
 
   return (
     <li className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:shadow-black/20">
@@ -21,15 +24,28 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
           {rank}
         </span>
 
-        <div
-          className="flex h-16 w-12 shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50 text-center dark:border-slate-600 dark:bg-slate-900"
-          aria-hidden="true"
-        >
-          <ImageOff className="h-4 w-4 text-slate-300 dark:text-slate-500" />
-          <span className="text-[8px] font-medium leading-none text-slate-400 dark:text-slate-500">
-            No image
-          </span>
-        </div>
+        {showCover ? (
+          <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-900">
+            <Image
+              src={book.coverImageUrl!}
+              alt={`${book.title} cover`}
+              fill
+              sizes="48px"
+              className="object-cover"
+              onError={() => setCoverFailed(true)}
+            />
+          </div>
+        ) : (
+          <div
+            className="flex h-16 w-12 shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50 text-center dark:border-slate-600 dark:bg-slate-900"
+            aria-hidden="true"
+          >
+            <ImageOff className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+            <span className="text-[8px] font-medium leading-none text-slate-400 dark:text-slate-500">
+              No image
+            </span>
+          </div>
+        )}
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-start">
