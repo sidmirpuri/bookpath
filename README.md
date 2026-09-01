@@ -165,9 +165,11 @@ To make Node.js available in future zsh sessions, add the following line to
 export PATH="$(brew --prefix node@24)/bin:$PATH"
 ```
 
-From `Nextjs_kanon/book-insight-ui`, install and run the frontend directly:
+From the repository root, enter the frontend directory, then install and run
+the frontend directly:
 
 ```bash
+cd Nextjs_kanon/book-insight-ui
 npm ci
 npm run dev
 ```
