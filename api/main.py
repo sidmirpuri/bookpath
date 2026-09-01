@@ -1,5 +1,6 @@
 import os
 from contextlib import asynccontextmanager
+from typing import Literal
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -39,7 +40,9 @@ app.add_middleware(
 
 class RecommendRequest(BaseModel):
     goal: str = Field(min_length=1, max_length=300)
-    reading_level: str = Field(alias="readingLevel")
+    reading_level: Literal["beginner", "intermediate", "advanced"] = Field(
+        alias="readingLevel"
+    )
 
     model_config = {"populate_by_name": True}
 
@@ -50,6 +53,9 @@ class Book(BaseModel):
     description: str
     why_this_book: str = Field(serialization_alias="whyThisBook")
     amazon_url: str | None = Field(default=None, serialization_alias="amazonUrl")
+    cover_image_url: str | None = Field(
+        default=None, serialization_alias="coverImageUrl"
+    )
 
 
 class RecommendResponse(BaseModel):
@@ -58,10 +64,8 @@ class RecommendResponse(BaseModel):
 
 @app.post("/recommend", response_model=RecommendResponse)
 def recommend(request: RecommendRequest) -> RecommendResponse:
-    # readingLevel isn't used to rank or filter results yet — the catalog has
-    # no difficulty data. Once that's added, filter/re-rank by request.reading_level here.
     recommender = get_recommender()
-    matches = recommender.search(request.goal, top_k=5)
+    matches = recommender.search(request.goal, request.reading_level, top_k=5)
 
     return RecommendResponse(
         books=[
@@ -70,6 +74,7 @@ def recommend(request: RecommendRequest) -> RecommendResponse:
                 description=match.description,
                 why_this_book=match.why_this_book,
                 amazon_url=match.amazon_url,
+                cover_image_url=match.cover_image_url,
             )
             for match in matches
         ]

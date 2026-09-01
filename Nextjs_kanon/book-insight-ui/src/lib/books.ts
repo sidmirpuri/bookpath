@@ -32,4 +32,5 @@ export interface Book {
   description: string;
   whyThisBook: string;
   amazonUrl?: string;
+  coverImageUrl?: string;
 }
