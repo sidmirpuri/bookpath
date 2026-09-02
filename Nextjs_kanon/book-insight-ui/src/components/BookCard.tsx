@@ -69,7 +69,7 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
               />
             </button>
           </div>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{book.description}</p>
+          <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">{book.description}</p>
 
           {book.amazonUrl && (
             <a
@@ -88,7 +88,7 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
               id={panelId}
               className="mt-3 rounded-lg bg-indigo-50 p-3 text-sm text-indigo-900 dark:bg-indigo-950/50 dark:text-indigo-200"
             >
-              {book.whyThisBook}
+              <span className="line-clamp-6">{book.whyThisBook}</span>
             </div>
           )}
         </div>
