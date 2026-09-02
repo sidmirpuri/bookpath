@@ -16,10 +16,19 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 
 DATA_DIR = Path(__file__).parent / "data"
-CSV_PATH = DATA_DIR / "exercise_data.csv"
+CSV_PATH = DATA_DIR / "final_data.csv"
 EMBEDDINGS_CACHE_PATH = DATA_DIR / "book_embeddings.npy"
 
 MODEL_NAME = "all-MiniLM-L6-v2"
+
+# difficulty_score is 1-5 (some books have no score at all). Map the UI's
+# three reading-level buttons onto that scale. A book with no score matches
+# none of these sets, so it's excluded automatically — not a separate check.
+READING_LEVEL_TO_SCORES: dict[str, set[int]] = {
+    "beginner": {1, 2},
+    "intermediate": {3},
+    "advanced": {4, 5},
+}
 
 
 @dataclass
@@ -27,19 +36,20 @@ class BookMatch:
     title: str
     description: str
     why_this_book: str
-    score: float
     amazon_url: str | None
+    cover_image_url: str | None
 
 
 def _load_catalog() -> pd.DataFrame:
     df = pd.read_csv(CSV_PATH)
-    df["toc_text_letters_only"] = df["toc_text_letters_only"].fillna("")
-    df["subcategory"] = df["subcategory"].fillna("General")
+    df["toc_text"] = df["toc_text"].fillna("")
+    df["category"] = df["category"].fillna("General")
+    df["difficulty_score"] = pd.to_numeric(df["difficulty_score"], errors="coerce")
     return df
 
 
 def _embedding_text(row: pd.Series) -> str:
-    return f"{row['title']}. {row['toc_text_letters_only']}"
+    return f"{row['title']}. {row['toc_text']}"
 
 
 class BookRecommender:
@@ -64,27 +74,37 @@ class BookRecommender:
         np.save(EMBEDDINGS_CACHE_PATH, embeddings)
         return embeddings
 
-    def search(self, goal: str, top_k: int = 5) -> list[BookMatch]:
+    def search(
+        self, goal: str, reading_level: str, top_k: int = 5
+    ) -> list[BookMatch]:
         query_embedding = self.model.encode(
             [goal],
             normalize_embeddings=True,
         )[0]
 
         scores = self.embeddings @ query_embedding
-        top_indices = np.argsort(-scores)[:top_k]
+        ranked_indices = np.argsort(-scores)
+
+        allowed_scores = READING_LEVEL_TO_SCORES.get(reading_level, set())
+        difficulty_column = self.catalog["difficulty_score"].to_numpy()
 
         matches: list[BookMatch] = []
-        for index in top_indices:
+        for index in ranked_indices:
+            if len(matches) >= top_k:
+                break
+            difficulty = difficulty_column[index]
+            if difficulty not in allowed_scores:
+                continue
+
             row = self.catalog.iloc[index]
-            toc = str(row["toc_text_letters_only"]).strip()
-            score = float(scores[index])
+            toc = str(row["toc_text"]).strip()
             matches.append(
                 BookMatch(
                     title=str(row["title"]),
-                    description=_truncate(toc, 220),
-                    why_this_book=_why_this_book(row["subcategory"], toc, score),
-                    score=score,
+                    description=_truncate(toc, 300),
+                    why_this_book=_why_this_book(row["category"], toc),
                     amazon_url=_amazon_url(row["parent_asin"]),
+                    cover_image_url=_cover_image_url(row["cover_image_url"]),
                 )
             )
         return matches
@@ -97,17 +117,23 @@ def _amazon_url(parent_asin: object) -> str | None:
     return f"https://www.amazon.com/dp/{asin}"
 
 
+def _cover_image_url(cover_image_url: object) -> str | None:
+    url = str(cover_image_url).strip()
+    if not url or url.lower() == "nan":
+        return None
+    return url
+
+
 def _truncate(text: str, max_chars: int) -> str:
     if len(text) <= max_chars:
         return text
     return text[:max_chars].rsplit(" ", 1)[0] + "…"
 
 
-def _why_this_book(subcategory: str, toc: str, score: float) -> str:
-    excerpt = _truncate(toc, 260)
+def _why_this_book(category: str, toc: str) -> str:
+    excerpt = _truncate(toc, 1800)
     return (
-        f"Matched from the \"{subcategory}\" category with a topic-similarity "
-        f"score of {score:.0%} against your goal. Its table of contents covers: "
+        f"Matched from the \"{category}\" category. Its table of contents covers: "
         f"{excerpt}"
     )
 
