@@ -36,7 +36,6 @@ class BookMatch:
     title: str
     description: str
     why_this_book: str
-    score: float
     amazon_url: str | None
     cover_image_url: str | None
 
@@ -99,13 +98,11 @@ class BookRecommender:
 
             row = self.catalog.iloc[index]
             toc = str(row["toc_text"]).strip()
-            score = float(scores[index])
             matches.append(
                 BookMatch(
                     title=str(row["title"]),
-                    description=_truncate(toc, 220),
-                    why_this_book=_why_this_book(row["category"], toc, score),
-                    score=score,
+                    description=_truncate(toc, 160),
+                    why_this_book=_why_this_book(row["category"], toc),
                     amazon_url=_amazon_url(row["parent_asin"]),
                     cover_image_url=_cover_image_url(row["cover_image_url"]),
                 )
@@ -133,11 +130,10 @@ def _truncate(text: str, max_chars: int) -> str:
     return text[:max_chars].rsplit(" ", 1)[0] + "…"
 
 
-def _why_this_book(category: str, toc: str, score: float) -> str:
-    excerpt = _truncate(toc, 260)
+def _why_this_book(category: str, toc: str) -> str:
+    excerpt = _truncate(toc, 500)
     return (
-        f"Matched from the \"{category}\" category with a topic-similarity "
-        f"score of {score:.0%} against your goal. Its table of contents covers: "
+        f"Matched from the \"{category}\" category. Its table of contents covers: "
         f"{excerpt}"
     )
 
