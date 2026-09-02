@@ -101,7 +101,7 @@ class BookRecommender:
             matches.append(
                 BookMatch(
                     title=str(row["title"]),
-                    description=_truncate(toc, 160),
+                    description=_truncate(toc, 300),
                     why_this_book=_why_this_book(row["category"], toc),
                     amazon_url=_amazon_url(row["parent_asin"]),
                     cover_image_url=_cover_image_url(row["cover_image_url"]),
@@ -131,7 +131,7 @@ def _truncate(text: str, max_chars: int) -> str:
 
 
 def _why_this_book(category: str, toc: str) -> str:
-    excerpt = _truncate(toc, 500)
+    excerpt = _truncate(toc, 1800)
     return (
         f"Matched from the \"{category}\" category. Its table of contents covers: "
         f"{excerpt}"
