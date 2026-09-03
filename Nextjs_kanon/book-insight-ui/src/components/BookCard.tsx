@@ -27,13 +27,13 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
           : "border border-slate-200 dark:border-slate-700"
       }`}
     >
-      <div className="flex items-start gap-4">
-        <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">
+      <div className="book-card-grid items-start">
+        <span className="area-rank mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">
           {rank}
         </span>
 
         {showCover ? (
-          <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-900">
+          <div className="area-cover relative h-16 w-12 overflow-hidden rounded-md bg-slate-100 dark:bg-slate-900">
             <Image
               src={book.coverImageUrl!}
               alt={`${book.title} cover`}
@@ -45,7 +45,7 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
           </div>
         ) : (
           <div
-            className="flex h-16 w-12 shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50 text-center dark:border-slate-600 dark:bg-slate-900"
+            className="area-cover flex h-16 w-12 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50 text-center dark:border-slate-600 dark:bg-slate-900"
             aria-hidden="true"
           >
             <ImageOff className="h-4 w-4 text-slate-300 dark:text-slate-500" />
@@ -55,7 +55,7 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
           </div>
         )}
 
-        <div className="min-w-0 flex-1">
+        <div className="area-title min-w-0">
           <h3 className="font-semibold text-slate-900 dark:text-slate-100">
             <button
               type="button"
@@ -72,10 +72,13 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
               />
             </button>
           </h3>
+        </div>
+
+        <div className="area-content min-w-0">
           {book.author && (
             <p className="text-sm text-slate-500 dark:text-slate-400">{book.author}</p>
           )}
-          <p className="mt-1 line-clamp-5 text-sm text-slate-600 dark:text-slate-400">{book.description}</p>
+          <p className="mt-2 line-clamp-5 text-sm text-slate-600 dark:text-slate-400">{book.description}</p>
 
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
             {book.amazonUrl && (
