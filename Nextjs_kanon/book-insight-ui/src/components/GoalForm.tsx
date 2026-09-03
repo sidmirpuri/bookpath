@@ -3,7 +3,6 @@
 import { useId, useState } from "react";
 import { ArrowRight, Leaf, BarChart3, Flag, Lock, Loader2, AlertCircle } from "lucide-react";
 import BookPathLogo from "./BookPathLogo";
-import StepIndicator from "./StepIndicator";
 import ReadingLevelCard from "./ReadingLevelCard";
 import { READING_LEVELS, type ReadingLevel } from "@/lib/books";
 
@@ -47,10 +46,7 @@ export default function GoalForm({
 
   return (
     <div className="mx-auto w-full max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/30">
-      <div className="flex items-start justify-between gap-4">
-        <BookPathLogo />
-        <StepIndicator currentStep={1} variant="light" />
-      </div>
+      <BookPathLogo />
 
       <form className="mt-8" onSubmit={handleSubmit} noValidate>
         <fieldset>
