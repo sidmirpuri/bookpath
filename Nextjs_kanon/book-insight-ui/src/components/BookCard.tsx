@@ -15,6 +15,7 @@ interface BookCardProps {
 export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps) {
   const panelId = useId();
   const [coverFailed, setCoverFailed] = useState(false);
+  const [titleExpanded, setTitleExpanded] = useState(false);
   const showCover = book.coverImageUrl && !coverFailed;
   const isFeatured = rank <= 2;
 
@@ -55,32 +56,20 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
         )}
 
         <div className="min-w-0 flex-1">
-          <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-start">
-            <div className="min-w-0">
-              <h3
-                title={book.title}
-                className="line-clamp-2 font-semibold text-slate-900 dark:text-slate-100"
-              >
-                {book.title}
-              </h3>
-              {book.author && (
-                <p className="text-sm text-slate-500 dark:text-slate-400">{book.author}</p>
-              )}
-            </div>
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100">
             <button
               type="button"
-              onClick={onToggle}
-              aria-expanded={isOpen}
-              aria-controls={panelId}
-              className="flex shrink-0 items-center gap-1 self-start text-sm font-medium text-indigo-600 hover:text-indigo-700 focus:outline-none focus:underline dark:text-indigo-400 dark:hover:text-indigo-300"
+              onClick={() => setTitleExpanded((expanded) => !expanded)}
+              className={`text-left hover:underline focus:outline-none focus:underline ${
+                titleExpanded ? "" : "line-clamp-2"
+              }`}
             >
-              Do you want to check table of contents?
-              <ChevronDown
-                className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                aria-hidden="true"
-              />
+              {book.title}
             </button>
-          </div>
+          </h3>
+          {book.author && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">{book.author}</p>
+          )}
           <p className="mt-1 line-clamp-5 text-sm text-slate-600 dark:text-slate-400">{book.description}</p>
 
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -99,6 +88,20 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
               {book.category}
             </span>
           </div>
+
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={isOpen}
+            aria-controls={panelId}
+            className="mt-2 flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700 focus:outline-none focus:underline dark:text-indigo-400 dark:hover:text-indigo-300"
+          >
+            Do you want to check table of contents?
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
 
           {isOpen && (
             <div
