@@ -60,9 +60,16 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
             <button
               type="button"
               onClick={() => setTitleExpanded((expanded) => !expanded)}
-              className="block w-full text-left hover:underline focus:outline-none focus:underline"
+              aria-expanded={titleExpanded}
+              className="flex w-full items-start gap-1 text-left hover:underline focus:outline-none focus:underline"
             >
               <span className={titleExpanded ? "" : "line-clamp-2"}>{book.title}</span>
+              <ChevronDown
+                className={`mt-1 h-4 w-4 shrink-0 text-slate-400 transition-transform dark:text-slate-500 ${
+                  titleExpanded ? "rotate-180" : ""
+                }`}
+                aria-hidden="true"
+              />
             </button>
           </h3>
           {book.author && (
@@ -104,7 +111,7 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
           {isOpen && (
             <div
               id={panelId}
-              className="mt-3 rounded-lg bg-indigo-50 p-3 text-sm text-indigo-900 dark:bg-indigo-950/50 dark:text-indigo-200"
+              className="mt-3 max-h-64 overflow-y-auto rounded-lg bg-indigo-50 p-3 text-sm text-indigo-900 dark:bg-indigo-950/50 dark:text-indigo-200"
             >
               <span>{book.whyThisBook}</span>
             </div>
