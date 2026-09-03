@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Target, BarChart3, RotateCcw, Bookmark, Check } from "lucide-react";
-import BookInsightLogo from "./BookInsightLogo";
+import BookPathLogo from "./BookPathLogo";
 import StepIndicator from "./StepIndicator";
 import BookCard from "./BookCard";
 import { READING_LEVELS, type Book, type ReadingLevel } from "@/lib/books";
@@ -28,7 +28,7 @@ export default function ResultsScreen({
 
   function handleSave() {
     const lines = [
-      "Book Insight — Top 5 Recommendations",
+      "Book Path — Top 5 Recommendations",
       `Goal: ${goal}`,
       `Reading level: ${levelLabel}`,
       "",
@@ -41,7 +41,7 @@ export default function ResultsScreen({
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "book-insight-recommendations.txt";
+    anchor.download = "book-path-recommendations.txt";
     anchor.click();
     URL.revokeObjectURL(url);
 
@@ -53,7 +53,7 @@ export default function ResultsScreen({
     <div className="mx-auto w-full max-w-3xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/30">
       <div className="bg-gradient-to-br from-slate-900 to-indigo-950 px-6 pb-6 pt-6 sm:px-8 sm:pt-8">
         <div className="flex items-start justify-between gap-4">
-          <BookInsightLogo variant="dark" />
+          <BookPathLogo />
           <StepIndicator currentStep={2} variant="dark" />
         </div>
 

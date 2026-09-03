@@ -16,8 +16,13 @@ import pandas as pd
 from sentence_transformers import SentenceTransformer
 
 DATA_DIR = Path(__file__).parent / "data"
-CSV_PATH = DATA_DIR / "final_data.csv"
+CSV_PATH = DATA_DIR / "books_with_summary.csv"
 EMBEDDINGS_CACHE_PATH = DATA_DIR / "book_embeddings.npy"
+
+# features_summary falls back to this placeholder when the source book had no
+# usable Amazon feature text to summarize. Treat it as "no summary" rather
+# than showing it to users as the book's description.
+FEATURES_SUMMARY_PLACEHOLDER = "Please check Amazon link for more infomation"
 
 MODEL_NAME = "all-MiniLM-L6-v2"
 
@@ -34,6 +39,7 @@ READING_LEVEL_TO_SCORES: dict[str, set[int]] = {
 @dataclass
 class BookMatch:
     title: str
+    category: str
     description: str
     why_this_book: str
     amazon_url: str | None
@@ -43,6 +49,7 @@ class BookMatch:
 def _load_catalog() -> pd.DataFrame:
     df = pd.read_csv(CSV_PATH)
     df["toc_text"] = df["toc_text"].fillna("")
+    df["features_summary"] = df["features_summary"].fillna("")
     df["category"] = df["category"].fillna("General")
     df["difficulty_score"] = pd.to_numeric(df["difficulty_score"], errors="coerce")
     return df
@@ -98,11 +105,16 @@ class BookRecommender:
 
             row = self.catalog.iloc[index]
             toc = str(row["toc_text"]).strip()
+            summary = str(row["features_summary"]).strip()
+            description = (
+                summary if summary and summary != FEATURES_SUMMARY_PLACEHOLDER else toc
+            )
             matches.append(
                 BookMatch(
                     title=str(row["title"]),
-                    description=_truncate(toc, 300),
-                    why_this_book=_why_this_book(row["category"], toc),
+                    category=str(row["category"]),
+                    description=_truncate(description, 300),
+                    why_this_book=_why_this_book(toc),
                     amazon_url=_amazon_url(row["parent_asin"]),
                     cover_image_url=_cover_image_url(row["cover_image_url"]),
                 )
@@ -130,12 +142,8 @@ def _truncate(text: str, max_chars: int) -> str:
     return text[:max_chars].rsplit(" ", 1)[0] + "…"
 
 
-def _why_this_book(category: str, toc: str) -> str:
-    excerpt = _truncate(toc, 1800)
-    return (
-        f"Matched from the \"{category}\" category. Its table of contents covers: "
-        f"{excerpt}"
-    )
+def _why_this_book(toc: str) -> str:
+    return _truncate(toc, 1800)
 
 
 @functools.lru_cache(maxsize=1)

@@ -29,6 +29,7 @@ export interface Book {
   // The current catalog has no author data, so this stays optional rather
   // than showing a made-up value.
   author?: string;
+  category: string;
   description: string;
   whyThisBook: string;
   amazonUrl?: string;

@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Book Insight",
+  title: "Book Path",
   description: "Smart book recommendations based on your learning goal.",
 };
 

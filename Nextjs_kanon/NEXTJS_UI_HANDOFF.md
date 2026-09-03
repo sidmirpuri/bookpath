@@ -1,4 +1,4 @@
-# Book Insight UI — Quick Start
+# Book Path UI — Quick Start
 
 Build the UI with **Next.js, TypeScript, and Tailwind CSS**. Focus only on making the design work with hard-coded book recommendations.
 
@@ -19,7 +19,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Open the `book-insight-ui` folder with Codex or Claude Code, attach the design image, and prompt:
 
-> Build the attached Book Insight UI using Next.js App Router, TypeScript, and Tailwind. Create the goal form, reading-level choices, recommendation summary, and five hard-coded book cards. When the form is submitted, show the recommendation screen. Make it responsive and accessible. Do not add authentication, a database, an API, or ML logic. Run `npm run lint` and `npm run build` when finished.
+> Build the attached Book Path UI using Next.js App Router, TypeScript, and Tailwind. Create the goal form, reading-level choices, recommendation summary, and five hard-coded book cards. When the form is submitted, show the recommendation screen. Make it responsive and accessible. Do not add authentication, a database, an API, or ML logic. Run `npm run lint` and `npm run build` when finished.
 
 ## 3. What to build
 

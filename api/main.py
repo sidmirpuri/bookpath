@@ -50,6 +50,7 @@ class RecommendRequest(BaseModel):
 class Book(BaseModel):
     title: str
     author: str | None = None
+    category: str
     description: str
     why_this_book: str = Field(serialization_alias="whyThisBook")
     amazon_url: str | None = Field(default=None, serialization_alias="amazonUrl")
@@ -71,6 +72,7 @@ def recommend(request: RecommendRequest) -> RecommendResponse:
         books=[
             Book(
                 title=match.title,
+                category=match.category,
                 description=match.description,
                 why_this_book=match.why_this_book,
                 amazon_url=match.amazon_url,
