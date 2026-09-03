@@ -60,11 +60,9 @@ export default function BookCard({ book, rank, isOpen, onToggle }: BookCardProps
             <button
               type="button"
               onClick={() => setTitleExpanded((expanded) => !expanded)}
-              className={`text-left hover:underline focus:outline-none focus:underline ${
-                titleExpanded ? "" : "line-clamp-2"
-              }`}
+              className="block w-full text-left hover:underline focus:outline-none focus:underline"
             >
-              {book.title}
+              <span className={titleExpanded ? "" : "line-clamp-2"}>{book.title}</span>
             </button>
           </h3>
           {book.author && (
